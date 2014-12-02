@@ -1,3 +1,4 @@
+## CHECKS for geographic data
 isGeoData = function(data) {
     ret = TRUE
     if (hasLon(data) & hasLat(data)) {
@@ -10,19 +11,16 @@ isGeoData = function(data) {
     return(ret)
 }
 
-## GETTERS
+## GETTERS for variable names for longitude and latitude
 getLon = function(data) { colnames(data)[grepl("^[Ll][Oo][Nn].*$", colnames(data))] }
 getLat = function(data) { colnames(data)[grepl("^[Ll][Aa][Tt].*$", colnames(data))] }
 
-## hasLon() & hasLat() check whether data contains variables of longitude and
-## latitude, respectively, and return logical.
+## CHECKS whether data contains longitude and latitude
 hasLon = function(data) { length(getLon(data)) > 0 }
 hasLat = function(data) { length(getLat(data)) > 0 }
 
+## CHECKS for longitutde and latitude values
 isLon = function(data) {
-    # Check whehter longitude values are appropriate.
-    # Returns:
-    #   Logical.
     values = data[, getLon(data)]
     ret = TRUE
     if(any(!is.finite(values)) & any(values < -180) & any(values > 180)) {
@@ -33,9 +31,6 @@ isLon = function(data) {
 }
 
 isLat = function(data) {
-    # Check whehter latitude values are appropriate.
-    # Returns:
-    #   Logical.
     values = data[, getLon(data)]
     ret = TRUE
     if(any(!is.finite(values)) & any(values < -90) & any(values > 90)) {

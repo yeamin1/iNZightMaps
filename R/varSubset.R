@@ -1,9 +1,17 @@
 varSubset = function(data, var, var.cond = NULL, loc) {
+    # Subset data set according to variable(s) and condition(s) specified.
+    # Rows of longitude and latitude outside the bounding box of location are
+    # dropped.
+    # Args:
+    #   data: data.frame
+    #   var: variable
+    #   var.cond: condition
+    #   loc: location
+    # Return:
+    #   subsetted data frame
+    # Example:
+    #   > varSubset(eq.df, MAG, 4 <= eq.df$MAG & eq.df$MAG <= 5, loc = getBB("NZ"))
     var = deparse(substitute(var))
-    if (grepl("c[(]|,", var)) {
-        var = gsub("\\s+|^c[(]|[)]$", "", var)
-        var = unlist(strsplit(var, ","))
-    }
     keepCols = c(getLon(data), getLat(data), var)
     completeRows = complete.cases(data[, c(getLon(data), getLat(data), var)])
     
@@ -20,8 +28,3 @@ varSubset = function(data, var, var.cond = NULL, loc) {
     
     return(dat)
 }
-
-# TEST ########################################################################
-a = varSubset(eq.df, MAG, eq.df$MAG < 5, loc = loc)
-a = varSubset(crime, hour, crime$hour < 1, loc = getBB("houston"))
-

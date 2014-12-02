@@ -1,18 +1,14 @@
-library(ggmap)
-library(ggplot2)
-library(animation)
-
 draw = function(data, var, var.cond = NULL,
-                location, zoom = 5, maptype = "terrain", src = "google",
+                location, zoom = NULL, maptype = "terrain", src = "google",
                 animate = FALSE, n = 5,
-                type = "point", mode = "colour",
-                geom = NULL, bins, low = NULL, high = NULL, range = NULL, size = NULL,
-                title = NULL, legend.title = NULL) {
+                type, mode, geom = NULL, bins, low = NULL, high = NULL,
+                size = NULL, title = NULL, col = NULL, grid = NULL) {
     
     loc = getBB(location)
-    baseMap = setBaseMap(loc, zoom, maptype, src)
+    baseMap = drawMap(loc, zoom, maptype, src)
     pars = as.list(match.call())[-1]
-    arg = c("data", "var", "var.cond", "type", "mode")
+    arg = c("data", "var", "var.cond", "type", "mode",
+            "low", "high", "title", "col", "grid")
     
     if (type == "point") {
         pArg = pars[which(names(pars) %in% arg)]
@@ -21,27 +17,22 @@ draw = function(data, var, var.cond = NULL,
         map = do.call(drawPoints, pArg)
     } else if (type == "contour")
         map = drawContour(data, var, var.cond, loc, baseMap, type, mode, 
-                          geom, bins, low, high, range, size)
+                          geom, bins, low, high, size, title)
     else if (type == "both")
-        map = drawPoints(data, var, var.cond, loc, baseMap, type, mode) +
+        map = drawPoints(data, var, var.cond, loc, baseMap, type, mode, title) +
         drawContour(data, var, var.cond, loc, baseMap, type, mode, 
-                    geom, bins, low, high, range, size)
+                    geom, bins, low, high, size, title)
     
     map
     
-#     if (length(legend.title) != 0) {
-#         map + xlab(label = "Longitude") + ylab(label = "Latitude") +
-#             guides(colour = guide_legend(var))
-#     } else 
-#         map + xlab(label = "Longitude") + ylab(label = "Latitude")
 }
 
 # TEST ########################################################################
-data = read.csv("//Users/eric/Desktop/Plotting on Maps/Earthquakes on NZ Map/NZ_earthquakes2010.csv")
-draw(data, MAG, 4 < data$MAG & data$MAG < 5, location = "NZ", zoom = 5, maptype = "terrain", src = "google", type = "point", mode = c("size", "colour"))
-
-data(crime)
-draw(crime, hour, crime$hour <= 1  & crime$hour > 0, location = "houston", zoom = 10, maptype = "terrain", src = "google", type = "point", mode = c("size", "alpha", "colour"))
+# data = read.csv("//Users/eric/Desktop/Plotting on Maps/Earthquakes on NZ Map/NZ_earthquakes2010.csv")
+# draw(data, MAG, 4 < data$MAG & data$MAG < 5, location = "NZ", zoom = 5, maptype = "terrain", src = "google", type = "point", mode = c("size", "colour"))
+# 
+# data(crime)
+# draw(crime, hour, crime$hour <= 1  & crime$hour > 0, location = "houston", zoom = 10, maptype = "terrain", src = "google", type = "point", mode = c("size", "alpha", "colour"))
 
 
 

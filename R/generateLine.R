@@ -11,23 +11,20 @@ generateLine = function(type, mode = NULL, geom,
         pLine = paste0("geom_point", l)
         if (any(grepl("colour", mode))) {
             pLine = gsub(re, "\\1, colour = var)\\2", pLine)
-            if (factor) { pLine = gsub(" var", "\"factor(var)\"", pLine) }
         }
         if (any(grepl("size", mode))) {
             pLine = gsub(re, "\\1, size = var)\\2", pLine)
             pLine = paste(pLine, "guides(size = guide_legend(\"size\"))",
                       sep = " + ")
-            if (factor) { pLine = gsub(" var", "\"factor(var)\"", pLine) }
         }
         if (any(grepl("alpha", mode))) {
             pLine = gsub(re, "\\1, alpha = var)\\2", pLine)
             pLine = paste(pLine, "guides(alpha = guide_legend(\"alpha\"))",
                       sep = " + ")
-            if (factor) { pLine = gsub(" var", "\"factor(var)\"", pLine) }
         }
         if (any(grepl("shape", mode))) {
             if (factor)
-                pLine = gsub(re, "\\1, shape = \"factor(var)\")\\2", pLine)
+                pLine = gsub(re, "\\1, shape = var)\\2", pLine)
             else
                 stop ("Variable must be a factor to use shape!")
         }
@@ -44,10 +41,12 @@ generateLine = function(type, mode = NULL, geom,
             if (factor) {
                 if (length(grid) == 2)
                     pLine = paste(pLine, sep = " + ",
-                                  paste("facet_wrap(~ var,", "nrow = grid[1],", 
+                                  paste("facet_wrap( ~ arg$var,", "nrow = grid[1],", 
                                         "ncol = grid[2])"))
                 else
-                    pLine = paste(pLine, "facet_wrap(~ var)", sep = " + ")
+                    pLine = paste(pLine,
+                                  paste0("facet_wrap( ~ facetVariable)"),
+                                  sep = " + ")
             } else
                 stop("Variable must be a factor to use grid!")
         }
