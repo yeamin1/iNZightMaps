@@ -41,8 +41,8 @@ generateLine = function(type, mode = NULL, geom,
             if (factor) {
                 if (length(grid) == 2)
                     pLine = paste(pLine, sep = " + ",
-                                  paste("facet_wrap( ~ arg$var,", "nrow = grid[1],", 
-                                        "ncol = grid[2])"))
+                                  paste("facet_wrap( ~ facetVariable,",
+                                        "nrow = grid[1],", "ncol = grid[2])"))
                 else
                     pLine = paste(pLine,
                                   paste0("facet_wrap( ~ facetVariable)"),
