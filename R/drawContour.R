@@ -1,26 +1,42 @@
 drawContour = function(data, var, var.cond = NULL, loc, baseMap,
-                       type, mode, geom, bins,
-                       low = NULL, high = NULL, range = NULL, size = NULL) {
-    arg <<- as.list(match.call())[-1]
+                       type = "contour", mode = NULL, 
+                       geom = "polygon", bins = NULL,
+                       low = NULL, high = NULL, col = NULL, cols = NULL,
+                       size = NULL, title = NULL, grid = NULL) {
+    arg = as.list(match.call())[-1]
     arg = arg[which(names(arg) %in% c("data", "var", "var.cond", "loc"))]
+    
+    factor = FALSE
+    if (yesFactor <- isFactor(arg$var)) {
+        arg$var = as.name(arg[["var"]][[-1]])
+        factor = TRUE
+    }
+    
     dat = do.call(varSubset, arg)
-    l = generateLine(type, mode, geom, low, high, range, size)
-    cmdLine = paste("baseMap", l, sep = " + ")
+    l = generateLine(type = type, mode = mode, geom = geom, 
+                     low = low, high = high, col = col, 
+                     factor = factor, grid = grid, cols = cols,
+                     size = size)
+    
+    if (yesFactor) {
+        l = processFactor(arg$var, l, mode)
+        if (any(grepl("shape", mode)))
+            n = length(unique(dat[, names(dat) == arg$var]))
+        
+        if (isNrow(grid) | isNcol(grid))
+            grid = processGrid(grid)
+    }
+    
+    ###########################################################################
+    # COULD FIX HERE TO MAKE PRETTY TITLES (a new method for generating titles)
+    if (is.null(title))
+        title = deparse(substitute(var.cond))
+    ###########################################################################
+        
+    var = as.character(arg$var)
+    cmdLine = paste("baseMap", l, 
+                    paste("labs(title = title,", "x = \"Longitude\",",
+                          "y = \"Latitude\")"), sep = " + ")
     contourMap = eval(parse(text = cmdLine))
     return(contourMap)
 }
-
-# TEST ########################################################################
-loc = getBB(location = "NZ")
-baseMap = setBaseMap(loc, zoom = 5)
-drawContour(eq.df, MAG, 2 < eq.df$MAG & eq.df$MAG < 2.1, loc, baseMap, type = "contour", mode = c("fill", "alpha"), geom = "polygon", bins = 4, low = "red", high = "green", range = c(0, 0.5))
-drawContour(eq.df, MAG, 2 < eq.df$MAG & eq.df$MAG < 2.1, loc, baseMap, type = "contour", mode = "alpha", geom = "density2d", bins = 4)
-
-loc = getBB(location = "houston")
-baseMap = setBaseMap(loc, zoom = 10)
-drawContour(crime, hour, 3 <= crime$hour & crime$hour <= 4, loc, baseMap, type = "contour", mode = c("fill", "alpha"), geom = "polygon", bins = 4)
-drawContour(crime, hour, 3 <= crime$hour & crime$hour <= 4, loc, baseMap, type = "contour", mode = c("fill", "alpha"), geom = "polygon", bins = 4, low = "red", high = "green")
-
-drawContour(crime, hour, 3 <= crime$hour & crime$hour <= 4, loc, baseMap, type = "contour", mode = "alpha", geom = "density2d", bins = 4, size = 1)
-
-###############################################################################

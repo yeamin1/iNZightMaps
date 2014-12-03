@@ -14,8 +14,10 @@ processGrid = function(grid) {
     return(grid)
 }
 
+# GETTERS for nrow & ncol
 getNrow = function(grid) { names(grid) == "nrow" }
 getNcol = function(grid) { names(grid) == "ncol" }
 
+# Logical
 isNrow = function(grid) { sum(getNrow(grid)) == 1 }
 isNcol = function(grid) { sum(getNcol(grid)) == 1 }
