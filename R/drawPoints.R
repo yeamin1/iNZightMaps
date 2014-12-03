@@ -1,5 +1,5 @@
 drawPoints = function(data, var, var.cond = NULL, loc, baseMap,
-                      type = "point", mode = NULL,
+                      type = "point", mode = NULL, solid = FALSE,
                       low = NULL, high = NULL, col = NULL, cols = NULL,
                       size = NULL, title = NULL, grid = NULL) {
     # Plot geographic data as points
@@ -19,19 +19,19 @@ drawPoints = function(data, var, var.cond = NULL, loc, baseMap,
     #   map as a ggplot object
     # Example:
     #   > drawPoints(eq.df, MAG, eq.df$MAG <= 1, loc = getBB("NZ"), baseMap = drawMap("NZ"), type = "point", mode = c("alpha", "size"))
-    arg = as.list(match.call())[-1]
-    arg = arg[which(names(arg) %in% c("data", "var", "var.cond", "loc"))]
+    allArg = as.list(match.call())[-1]
+    arg = allArg[which(names(allArg) %in% c("data", "var", "var.cond", "loc"))]
     
     factor = FALSE
     if (yesFactor <- isFactor(arg$var)) {
-        arg$var = as.name(arg$var[[-1]])
+        arg$var = as.name(arg[["var"]][[-1]])        
         factor = TRUE
     }
     
     dat = do.call(varSubset, arg)
     l = generateLine(type = type, mode = mode, low = low, high = high,
                      col = col, factor = factor, grid = grid, cols = cols,
-                     size = size)
+                     size = size, solid = solid)
     
     if (yesFactor) {
         l = processFactor(arg$var, l, mode)
