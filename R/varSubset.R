@@ -15,10 +15,20 @@ varSubset = function(data, var, var.cond = NULL, loc) {
     keepCols = c(getLon(data), getLat(data), var)
     completeRows = complete.cases(data[, c(getLon(data), getLat(data), var)])
     
+    if (inherits(loc, "geoBBox") |
+            sum(grepl("west|east|south|north", colnames(loc))) == 4) {
+        loc.cond = loc$west <= data[, getLon(data)] & 
+            data[, getLon(data)] <= loc$east &
+            loc$south <= data[, getLat(data)] &
+            data[, getLat(data)] <= loc$north
+    }
+    
+    cond = completeRows & loc.cond
+    
     if (!is.null(var.cond))
-        dat = data[completeRows & var.cond, keepCols]
+        dat = data[cond & var.cond, keepCols]
     else
-        dat = data[completeRows, keepCols]
+        dat = data[cond, keepCols]
     
     if (nrow(dat) == 0)
         stop(paste("No observations in data frame.",

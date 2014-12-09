@@ -1,10 +1,11 @@
-generateLine = function(type, mode = NULL, geom = "polygon", solid = FALSE,
-                        size = NULL, factor = FALSE, grid = NULL,
-                        mode.p = NULL, size.p = NULL, col.p = NULL,
-                        mode.c = NULL, size.c = NULL, col.c = NULL,
-                        low = NULL, high = NULL, col = NULL, cols = NULL,
-                        low.p = NULL, high.p = NULL, cols.p = NULL,
-                        low.c = NULL, high.c = NULL, cols.c = NULL) {
+generateLine = function(type, mode = NULL, mode.p = NULL, mode.c = NULL,
+                        geom = "polygon", grid = NULL, factor = FALSE,
+                        low = NULL, low.p = NULL, low.c = NULL,
+                        high = NULL, high.p = NULL, high.c = NULL,
+                        size = NULL, size.p = NULL, size.c = NULL,
+                        col = NULL, col.p = NULL, col.c = NULL,
+                        cols = NULL, cols.p = NULL, cols.c = NULL,
+                        solid = FALSE) {
     # Helper function to generate lines of command to draw maps.
     # Returns lines as strings which are parsed as text in drawPoint() and
     # drawContour().

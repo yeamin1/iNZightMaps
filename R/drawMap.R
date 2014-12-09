@@ -9,7 +9,8 @@ drawMap = function(location, zoom = NULL,
     #   colour: "color" by default. Could be "bw".
     # Return:
     #   map of ggplot object
-    if (inherits(location, "boundingBox"))
+    
+    if (inherits(location, "geoBBox"))
         loc = location
     else if (is.character(location))
         loc = getBB(location)
@@ -23,35 +24,18 @@ drawMap = function(location, zoom = NULL,
             zoom = 10
     }
     
-    baseMapRaster = get_map(location = c(lon = loc$lon, lat = loc$lat),
-                            zoom = zoom, maptype = maptype, source = src,
-                            color = colour)
+    cat("retrieving map... ")
+    currentTime = Sys.time()
+    
+    baseMapRaster = suppressMessages(
+        get_map(location = c(lon = loc$lon, lat = loc$lat), zoom = zoom, 
+                maptype = maptype, source = src, color = colour)
+    )
+    
+    completeTime = Sys.time()
     baseMap = ggmap(baseMapRaster)
+    
+    timeCat(currentTime, completeTime)
+    
     return(baseMap)
 }
-
-## GETTER for bounding box
-getBB = function(location) {
-    # Retrieve the bounding box (ie, boundaries) of location specified.
-    # Its main use is to check whether a data set has any location values 
-    # outside the boundaries of the location.
-    # Args:
-    #   location: character
-    # Return:
-    #   data frame
-    # Example:
-    #   > getBB("Auckland University")
-    loc = geocode(location, output = "more");
-    class(loc) = c(class(loc), "boundingBox")
-    return(loc)
-}
-
-
-# asFactor = function(data, var) {
-#     if (!is.factor(data$var) & ) {   
-#     }
-#     if (c = is.character(data$var) || f = is.factor(data$var)) {
-#         if(c & length(unique(data$var)) < 0.3 * nrow(data)) {   
-#         }   
-#     }
-# }
