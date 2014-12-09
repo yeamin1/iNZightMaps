@@ -1,38 +1,58 @@
 draw = function(data, var, var.cond = NULL,
                 location, zoom = NULL, maptype = "terrain", src = "google",
-                # animate = FALSE, n = 5, #
-                type, mode, geom = NULL, bins = NULL, grid = NULL,
-                low = NULL, high = NULL, solid = FALSE,
-                size = NULL, title = NULL, col = NULL, cols = NULL, 
-                mode.p = NULL, size.p = NULL, col.p = NULL,
-                mode.c = NULL, size.c = NULL, col.c = NULL,
-                low.p = NULL, high.p = NULL, cols.p = NULL,
-                low.c = NULL, high.c = NULL, cols.c = NULL) {
+                type, mode, mode.p = NULL, mode.c = NULL,
+                geom = NULL, bins = NULL, grid = NULL,
+                low = NULL, low.p = NULL, low.c = NULL,
+                high = NULL, high.p = NULL, high.c = NULL,
+                size = NULL, size.p = NULL, size.c = NULL,
+                col = NULL, col.p = NULL, col.c = NULL,
+                cols = NULL, cols.p = NULL, cols.c = NULL,
+                solid = FALSE, title = NULL) {
     
-    loc = getBB(location)
-    baseMap = drawMap(loc, zoom, maptype, src)
-    pars = as.list(match.call())[-1]
-    if (type == "point") {
-        argString = c("data", "var", "var.cond", "type", "mode", "solid",
-                      "low", "high", "col", "cols", "size", "title", "grid")
-        f = "drawPoints"
-    } else if (type == "contour") {
-        argString = c("data", "var", "var.cond", "type", "mode","solid",
-                      "geom", "bins", "low", "high", "col", "cols", 
-                      "size", "title", "grid")
-        f = "drawContour"
-    } else if (type == "both") {
-        argString = c("data", "var", "var.cond", "type", "geom", "bins",
-                      "mode.p", "mode.c", "size.p", "size.c",
-                      "low.p", "low.c","high.p", "high.c",
-                      "col.p", "col.c", "cols.p", "cols.c",
-                      "title", "grid")
-        f = "drawBoth"
+    allArg = as.list(match.call())[-1]
+    arg = allArg[which(names(allArg) %in% c("data", "var", "var.cond"))]
+    arg$loc = getBB(location)
+    
+    factor = FALSE
+    if (yesFactor <- isFactor(arg$var)) {
+        arg$var = as.name(arg[["var"]][[-1]])        
+        factor = TRUE
+    }
+        
+    dat = do.call(varSubset, arg)
+
+    l = generateLine(type, mode, mode.p, mode.c, geom, grid, factor,
+                     low, low.p, low.c, high, high.p, high.c,
+                     size, size.p, size.c, col, col.p, col.c,
+                     cols, cols.p, cols.c, solid)
+    
+    if (yesFactor) {
+        l = processFactor(arg$var, l, mode)
+        if (any(grepl("shape", mode)))
+            n = length(unique(dat[, names(dat) == arg$var]))
+        
+        if (isNrow(grid) | isNcol(grid))
+            grid = processGrid(grid)
     }
     
-    arg = pars[which(names(pars) %in% argString)]
-    arg$loc = loc
-    arg$baseMap = baseMap
-    map = do.call(f, arg)
+    ###########################################################################
+    # COULD FIX HERE TO MAKE PRETTY TITLES (a new method for generating titles)
+    if (is.null(title))
+        title = deparse(substitute(var.cond))
+    ###########################################################################
+        
+    baseMap = drawMap(arg$loc, zoom, maptype, src)
+    
+    var = as.character(arg$var)
+    cmdLine = paste("baseMap", l,
+                    paste("labs(title = title,", "x = \"Longitude\",",
+                          "y = \"Latitude\")"), sep = " + ")
+    
+    cat("mapping data... ")
+    currentTime = Sys.time()
+    map = eval(parse(text = cmdLine))
+    completeTime = Sys.time()
+    timeCat(currentTime, completeTime)
+    
     return(map)
 }
