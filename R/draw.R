@@ -1,6 +1,6 @@
 draw = function(data, var, var.cond = NULL,
                 location, zoom = NULL, maptype = "terrain", src = "google",
-                type, mode, mode.p = NULL, mode.c = NULL,
+                type, mode = NULL, mode.p = NULL, mode.c = NULL,
                 geom = NULL, bins = NULL, grid = NULL,
                 low = NULL, low.p = NULL, low.c = NULL,
                 high = NULL, high.p = NULL, high.c = NULL,
@@ -50,7 +50,7 @@ draw = function(data, var, var.cond = NULL,
     
     cat("mapping data... ")
     currentTime = Sys.time()
-    map = eval(parse(text = cmdLine))
+    map = suppressMessages(eval(parse(text = cmdLine)))
     completeTime = Sys.time()
     timeCat(currentTime, completeTime)
     
