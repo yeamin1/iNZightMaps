@@ -11,8 +11,15 @@ getBB = function(location) {
     #   > getBB("Auckland University")
     cat("geocoding location... ")
     currentTime = Sys.time()
-    loc = suppressMessages(geocode(location, output = "more"))
+    op = options(warn = 2)    ## upgrade warnings to errors to try()
+    loc = try(suppressMessages(geocode(location, output = "more")),
+              silent = TRUE)
+    options(op)               ## reset the option
     completeTime = Sys.time()
+    
+    if (inherits(loc, "try-error"))
+        return(cat("fail.\n"))
+    
     timeCat(currentTime, completeTime)
     class(loc) = c(class(loc), "geoBBox")
     return(loc)
