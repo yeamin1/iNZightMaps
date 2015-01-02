@@ -1,4 +1,4 @@
-draw = function(data, var, var.cond = NULL,
+draw = function(data, lon = NULL, lat = NULL, var, var.cond = NULL,
                 location, zoom = NULL, maptype = "terrain", src = "google",
                 type, mode = NULL, mode.p = NULL, mode.c = NULL,
                 geom = NULL, bins = NULL, grid = NULL,
@@ -10,7 +10,8 @@ draw = function(data, var, var.cond = NULL,
                 solid = FALSE, title = NULL) {
     
     allArg = as.list(match.call())[-1]
-    arg = allArg[which(names(allArg) %in% c("data", "var", "var.cond"))]
+    arg = allArg[which(names(allArg) %in% 
+                           c("data", "lon", "lat", "var", "var.cond"))]
     arg$loc = getBB(location)
     
     factor = FALSE
@@ -20,7 +21,7 @@ draw = function(data, var, var.cond = NULL,
     }
         
     dat = do.call(varSubset, arg)
-
+    
     l = generateLine(type, mode, mode.p, mode.c, geom, grid, factor,
                      low, low.p, low.c, high, high.p, high.c,
                      size, size.p, size.c, col, col.p, col.c,
