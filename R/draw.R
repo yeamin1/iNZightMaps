@@ -1,5 +1,5 @@
 draw = function(data, lon = NULL, lat = NULL, var, var.cond = NULL,
-                location, zoom = NULL, maptype = "terrain", src = "google",
+                location, zoom = 10, maptype = "terrain", src = "google",
                 type, mode = NULL, mode.p = NULL, mode.c = NULL,
                 geom = NULL, bins = NULL, grid = NULL,
                 low = NULL, low.p = NULL, low.c = NULL,

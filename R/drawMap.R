@@ -21,7 +21,7 @@ drawMap = function(location, zoom = 10,
     
     if (loc$type == "country" & zoom == 10)
         zoom = 5
-    
+
     cat("retrieving map... ")
     currentTime = Sys.time()
     
