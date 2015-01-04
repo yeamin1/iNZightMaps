@@ -11,9 +11,16 @@ varSubset = function(data, lon = NULL, lat = NULL, var, var.cond = NULL, loc) {
     #   subsetted data frame
     # Example:
     #   > varSubset(eq.df, MAG, 4 <= eq.df$MAG & eq.df$MAG <= 5, loc = getBB("NZ"))
-    var = deparse(substitute(var))
-    lon = deparse(substitute(lon))
-    lat = deparse(substitute(lat))
+    var = substitute(var)
+    lon = substitute(lon)
+    lat = substitute(lat)
+    
+    if (!is.character(var))
+        var = deparse(var)
+    if (!is.character(lon))
+        lon = deparse(lon)
+    if (!is.character(lat))
+        lat = deparse(lat)
     
     if (lon == "NULL")
         lon = getLon(data)
@@ -31,9 +38,11 @@ varSubset = function(data, lon = NULL, lat = NULL, var, var.cond = NULL, loc) {
     
     cond = completeRows & loc.cond
     
-    if (!is.null(var.cond))
+    if (!is.null(var.cond)) {
+        if (is.character(var.cond))
+            var.cond = eval(parse(text = var.cond))
         dat = data[cond & var.cond, keepCols]
-    else
+    } else
         dat = data[cond, keepCols]
     
     if (nrow(dat) == 0)

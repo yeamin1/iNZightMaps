@@ -8,7 +8,6 @@ draw = function(data, lon = NULL, lat = NULL, var, var.cond = NULL,
                 col = NULL, col.p = NULL, col.c = NULL,
                 cols = NULL, cols.p = NULL, cols.c = NULL,
                 solid = FALSE, title = NULL) {
-    
     allArg = as.list(match.call())[-1]
     arg = allArg[which(names(allArg) %in% 
                            c("data", "lon", "lat", "var", "var.cond"))]
@@ -38,10 +37,10 @@ draw = function(data, lon = NULL, lat = NULL, var, var.cond = NULL,
     
     ###########################################################################
     # COULD FIX HERE TO MAKE PRETTY TITLES (a new method for generating titles)
-    if (is.null(title))
-        title = deparse(substitute(var.cond))
+    # if (is.null(title))
+    #     title = deparse(substitute(var.cond))
     ###########################################################################
-        
+    
     baseMap = drawMap(arg$loc, zoom, maptype, src)
     
     var = as.character(arg$var)

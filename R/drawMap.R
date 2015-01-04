@@ -19,7 +19,7 @@ drawMap = function(location, zoom = 10,
     } else if (length(location) == 2 & all(is.finite(location)))
         loc = data.frame(loc = location[1], lat = location[2])
     
-    if (loc$type == "country")
+    if (loc$type == "country" & zoom == 10)
         zoom = 5
     
     cat("retrieving map... ")
