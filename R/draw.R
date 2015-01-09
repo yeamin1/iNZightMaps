@@ -1,5 +1,6 @@
 draw = function(data, lon = NULL, lat = NULL, var, var.cond = NULL,
-                location, zoom = 10, maptype = "terrain", src = "google",
+                location, zoom = 10, maptype = "terrain", 
+                src = "google", colour = "color",
                 type, mode = NULL, mode.p = NULL, mode.c = NULL,
                 geom = NULL, bins = NULL, grid = NULL,
                 low = NULL, low.p = NULL, low.c = NULL,
@@ -15,10 +16,10 @@ draw = function(data, lon = NULL, lat = NULL, var, var.cond = NULL,
     
     factor = FALSE
     if (yesFactor <- isFactor(arg$var)) {
-        arg$var = as.name(arg[["var"]][[-1]])        
+        arg$var = as.name(arg[["var"]][[-1]])
         factor = TRUE
     }
-        
+    
     dat = do.call(varSubset, arg)
     
     l = generateLine(type, mode, mode.p, mode.c, geom, grid, factor,
@@ -41,7 +42,7 @@ draw = function(data, lon = NULL, lat = NULL, var, var.cond = NULL,
     #     title = deparse(substitute(var.cond))
     ###########################################################################
     
-    baseMap = drawMap(arg$loc, zoom, maptype, src)
+    baseMap = drawMap(arg$loc, zoom, maptype, src, colour)
     
     var = as.character(arg$var)
     cmdLine = paste("baseMap", l,
