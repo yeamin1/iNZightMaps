@@ -5,7 +5,7 @@ isGeoData = function(data) {
         if (isLon(data) & isLat(data))
             return
     } else {
-        stop("No longitude and latitude in data")
+        # warning("No longitude and latitude in data")
         ret = FALSE
     }
     return(ret)
