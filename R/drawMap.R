@@ -1,6 +1,5 @@
-drawMap = function(location, zoom = 10,
-                      maptype = "terrain", src = "google",
-                      colour = "color") {
+drawMap = function(location, zoom = 10, maptype = "terrain", src = "google",
+                   colour = "color") {
     # Retrieve maps from GIS services.
     # Its main use is to set a base map on which data can be drawn.
     # Args:
@@ -19,19 +18,18 @@ drawMap = function(location, zoom = 10,
         loc = c(lon = locBB$lon, lat = locBB$lat)
         if (locBB$type == "country" & zoom == 10) { zoom = 5 }
         if (is.null(loc)) { stop("location not found") }
-    } else if (length(location) == 2 & all(is.finite(location))) {
+    } else if (length(location) == 2) {
         loc = c(loc = location[1], lat = location[2])
-    } else if (length(location) == 4 & all(is.finite(location))) {
-        loc = location
+    } else if (length(location) == 4) {
+        loc = c(location$west, location$south, location$east, location$north)
     }
     
     cat("retrieving map... ")
     currentTime = Sys.time()
     
-    baseMapRaster = suppressMessages(
+    baseMapRaster = suppressWarnings(suppressMessages(
         get_map(location = loc, zoom = zoom, maptype = maptype, 
-                source = src, color = colour)
-    )
+                source = src, color = colour)))
     
     completeTime = Sys.time()
     

@@ -19,19 +19,22 @@ generateLine = function(type, mode = NULL, mode.p = NULL, mode.c = NULL,
         pLine = paste0("geom_point", l)
         
         ## mode = "colour"
-        if (any(grepl("colour", mode)) | any(grepl("colour", mode.p)))
-            pLine = gsub(re, "\\1, colour = var)\\2", pLine)
+        if (any(grepl("colour", mode)) | any(grepl("colour", mode.p))) {
+            pLine = gsub(re, "\\1, colour = colour_by)\\2", pLine)
+            pLine = paste(pLine, "guides(colour = guide_colourbar(reverse = TRUE))",
+                          sep = " + ")
+        }
         
         ## mode = "size"
         if (any(grepl("size", mode)) | (any(grepl("colour", mode.p)))) {
-            pLine = gsub(re, "\\1, size = var)\\2", pLine)
-            pLine = paste(pLine, "guides(size = guide_legend(\"size\"))",
+            pLine = gsub(re, "\\1, size = size_by)\\2", pLine)
+            pLine = paste(pLine, "guides(size = guide_legend(size_by))",
                       sep = " + ")
         }
         
         ## mode = "alpha"
         if (any(grepl("alpha", mode)) | any(grepl("alpha", mode.p))) {
-            pLine = gsub(re, "\\1, alpha = var)\\2", pLine)
+            pLine = gsub(re, "\\1, alpha = colour_by)\\2", pLine)
             pLine = paste(pLine, "guides(alpha = guide_legend(\"alpha\"))",
                       sep = " + ")
         }
@@ -113,8 +116,11 @@ generateLine = function(type, mode = NULL, mode.p = NULL, mode.c = NULL,
         cLine = gsub(re, "stat_density2d\\1), bins = bins\\2", l)
         
         ## mode = "colour"
-        if (any(grepl("colour", mode)) | any(grepl("colour", mode.c)))
+        if (any(grepl("colour", mode)) | any(grepl("colour", mode.c))) {
             cLine = gsub(re, "\\1, colour = \"..level..\")\\2", cLine)
+            cLine = paste(cLine, "guides(colour = guide_colourbar(reverse = TRUE))",
+                          sep = " + ")
+        }
         
         ## mode = "alpha"
         if (any(grepl("alpha", mode)) | any(grepl("alpha", mode.c))) {
@@ -143,12 +149,12 @@ generateLine = function(type, mode = NULL, mode.p = NULL, mode.c = NULL,
             ## low & high
             if (!is.null(low) & !is.null(high))
                 cLine = paste(cLine, 
-                              paste0("scale_fill_gradient",
+                              paste0("scale_colour_gradient",
                                      "(low = low, high = high)"),
                               sep = " + ")
             else if (!is.null(low.c) & !is.null(high.c))
                 cLine = paste(cLine, 
-                              paste0("scale_fill_gradient",
+                              paste0("scale_colour_gradient",
                                      "(low = low.c, high = high.c)"),
                               sep = " + ")
             
