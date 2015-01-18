@@ -1,5 +1,5 @@
 timeCat = function(currentTime, completeTime) {
     cat(paste0("done!", " (",
-               signif(completeTime - currentTime, digits = 3), 
+               round(completeTime - currentTime, digits = 2),
                " sec)", "\n"))
 }
