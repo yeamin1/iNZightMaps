@@ -1,4 +1,6 @@
-varSubset = function(data, lon = NULL, lat = NULL, var, var.cond = NULL, loc) {
+varSubset = function(data, lon = NULL, lat = NULL, 
+                     colour_by = NULL, colour_by_cond = NULL, 
+                     size_by = NULL, size_by_cond = NULL, location) {
     # Subset data set according to variable(s) and condition(s) specified.
     # Rows of longitude and latitude outside the bounding box of location are
     # dropped.
@@ -11,43 +13,68 @@ varSubset = function(data, lon = NULL, lat = NULL, var, var.cond = NULL, loc) {
     #   subsetted data frame
     # Example:
     #   > varSubset(eq.df, MAG, 4 <= eq.df$MAG & eq.df$MAG <= 5, loc = getBB("NZ"))
-    var = substitute(var)
+    
     lon = substitute(lon)
     lat = substitute(lat)
+    if (!is.null(colour_by)) { colour_by = substitute(colour_by) }
+    if (!is.null(size_by)) { size_by = substitute(size_by) }
     
-    if (!is.character(var))
-        var = deparse(var)
-    if (!is.character(lon))
-        lon = deparse(lon)
-    if (!is.character(lat))
-        lat = deparse(lat)
+    if (!is.character(lon)) { lon = deparse(lon) }
+    if (!is.character(lat)) { lat = deparse(lat) }
+    if (!is.null(colour_by) & !is.character(colour_by))
+        var = deparse(colour_by)
+    if (!is.null(size_by) & !is.character(size_by))
+        var = deparse(size_by)
     
-    if (lon == "NULL")
-        lon = getLon(data)
-    if (lat == "NULL")
-        lat = getLat(data)
+    if (lon == "NULL") { lon = getLon(data) }
+    if (lat == "NULL") { lat = getLat(data) }
     
-    keepCols = c(lon, lat, var)
-    completeRows = complete.cases(data[, c(lon, lat, var)])
+    ## ggmap uses [0, 360] range for longitude, instead of [-180, 180]
+    data[data$lon < 0, lon] = data[data$long < 0, lon] + 360
     
-    if (inherits(loc, "geoBBox") |
-            sum(grepl("west|east|south|north", colnames(loc))) == 4) {
-        loc.cond = loc$west <= data[, lon] & data[, lon] <= loc$east &
-            loc$south <= data[, lat] & data[, lat] <= loc$north
+    keepCols = c(lon, lat, colour_by, size_by)
+    completeRows = complete.cases(data[, keepCols])
+    
+    if (is.null(colnames(location))) {
+        colnames(location) = c("north", "east", "south", "west")
     }
     
-    cond = completeRows & loc.cond
+    westCond = location$west <= data[, lon]
+    eastCond = data[, lon] <= location$east
+    southCond = location$south <= data[, lat]
+    northCond = data[, lat] <= location$north
     
-    if (!is.null(var.cond)) {
-        if (is.character(var.cond))
-            var.cond = eval(parse(text = var.cond))
-        dat = data[cond & var.cond, keepCols]
-    } else
-        dat = data[cond, keepCols]
+    location_cond = westCond & eastCond & southCond & northCond
+    
+    # if (inherits(location, "geoBBox") |
+    #         sum(grepl("west|east|south|north", colnames(loc))) == 4) {
+    # }
+    
+    cond = completeRows & location_cond
+    
+    
+    if (!is.null(colour_by_cond)) {
+        if (is.character(colour_by_cond))
+            colour_by_cond = eval(parse(text = colour_by_cond))
+        cond = cond & colour_by_cond
+    }
+    if (!is.null(size_by_cond)) {
+        if (is.character(size_by_cond))
+            size_by_cond = eval(parse(text = size_by_cond))
+        cond = cond & size_by_cond
+    }
+    
+    dat = data[cond, keepCols]
+#     if (!is.null(var.cond)) {
+#         if (is.character(var.cond))
+#             var.cond = eval(parse(text = var.cond))
+#         dat = data[cond & var.cond, keepCols]
+#     } else {
+#         dat = data[cond, keepCols]
+#     }
     
     if (nrow(dat) == 0)
-        stop(paste("No observations in data frame.",
-                   "(check 'var.cond' and/or 'location')", sep = "\n"))
+        stop("No observations in data frame.")
     
     colnames(dat)[1:2] = c("lon", "lat")
     
