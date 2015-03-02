@@ -11,7 +11,9 @@ getBB = function(location) {
     #   > getBB("Auckland University")
     cat("geocoding location... ")
     currentTime = Sys.time()
-    op = options(warn = 2)    ## upgrade warnings to errors to try()
+    op = options(warn = 2) # upgrade warnings to errors to try()
+    
+    ## geocode location to retrieve its bounding box
     loc = try(suppressMessages(geocode(location, output = "more")),
               silent = TRUE)
     options(op)               ## reset the option

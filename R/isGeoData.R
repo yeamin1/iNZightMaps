@@ -21,7 +21,7 @@ hasLat = function(data) { length(getLat(data)) > 0 }
 
 ## CHECKS for longitutde and latitude values
 isLon = function(data) {
-    values = data[, getLon(data)]
+    values = data[!is.na(data[[getLon(data)]]), getLon(data)]
     ret = TRUE
     if(any(!is.finite(values)) & any(values < -180) & any(values > 180)) {
         ret = FALSE
@@ -31,7 +31,7 @@ isLon = function(data) {
 }
 
 isLat = function(data) {
-    values = data[, getLon(data)]
+    values = data[!is.na(data[[getLon(data)]]), getLon(data)]
     ret = TRUE
     if(any(!is.finite(values)) & any(values < -90) & any(values > 90)) {
         ret = FALSE

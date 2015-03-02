@@ -9,6 +9,7 @@ drawMap = function(location, zoom = 10, maptype = "terrain", src = "google",
     # Return:
     #   map of ggplot object
     
+    ## save location in the right format
     if (inherits(location, "geoBBox")) {
         loc = c(lon = location$lon, lat = location$lat)
         if (location$type == "country" & zoom == 10) { zoom = 5 }
@@ -27,14 +28,17 @@ drawMap = function(location, zoom = 10, maptype = "terrain", src = "google",
     cat("retrieving map... ")
     currentTime = Sys.time()
     
+    ## retrieve a map based on the arugments and the location (loc)
     baseMapRaster = suppressWarnings(suppressMessages(
         get_map(location = loc, zoom = zoom, maptype = maptype, 
                 source = src, color = colour)))
     
     completeTime = Sys.time()
     
+    ## save the raster map as a ggplot object
     baseMap = ggmap(baseMapRaster)
     
+    ## display the map on the R graphics device
     timeCat(currentTime, completeTime)
     return(baseMap)
 }

@@ -1,4 +1,4 @@
-varSubset = function(data, lon = NULL, lat = NULL, 
+varSubset = function(data, lon = NULL, lat = NULL, factor_by = NULL,
                      colour_by = NULL, colour_by_cond = NULL, 
                      size_by = NULL, size_by_cond = NULL, location) {
     # Subset data set according to variable(s) and condition(s) specified.
@@ -16,15 +16,12 @@ varSubset = function(data, lon = NULL, lat = NULL,
     
     lon = substitute(lon)
     lat = substitute(lat)
+    if (!is.null(factor_by)) { factor_by = substitute(factor_by) }
     if (!is.null(colour_by)) { colour_by = substitute(colour_by) }
-    if (!is.null(size_by)) { size_by = substitute(size_by) }
+    if (!is.null(size_by))   { size_by = substitute(size_by)     }
     
     if (!is.character(lon)) { lon = deparse(lon) }
     if (!is.character(lat)) { lat = deparse(lat) }
-    if (!is.null(colour_by) & !is.character(colour_by))
-        var = deparse(colour_by)
-    if (!is.null(size_by) & !is.character(size_by))
-        var = deparse(size_by)
     
     if (lon == "NULL") { lon = getLon(data) }
     if (lat == "NULL") { lat = getLat(data) }
@@ -32,27 +29,26 @@ varSubset = function(data, lon = NULL, lat = NULL,
     ## ggmap uses [0, 360] range for longitude, instead of [-180, 180]
     data[data$lon < 0, lon] = data[data$long < 0, lon] + 360
     
-    keepCols = c(lon, lat, colour_by, size_by)
+    ## find which rows have complete entries
+    keepCols = c(lon, lat, colour_by, size_by, factor_by)
     completeRows = complete.cases(data[, keepCols])
     
     if (is.null(colnames(location))) {
         colnames(location) = c("north", "east", "south", "west")
     }
     
+    ## bounding box conditions
     westCond = location$west <= data[, lon]
     eastCond = data[, lon] <= location$east
     southCond = location$south <= data[, lat]
     northCond = data[, lat] <= location$north
     
+    ## specify the condition for subsetting
     location_cond = westCond & eastCond & southCond & northCond
-    
-    # if (inherits(location, "geoBBox") |
-    #         sum(grepl("west|east|south|north", colnames(loc))) == 4) {
-    # }
-    
     cond = completeRows & location_cond
     
-    
+    ## the condition is finalised based on which representative variable 
+    ## conditions are specified
     if (!is.null(colour_by_cond)) {
         if (is.character(colour_by_cond))
             colour_by_cond = eval(parse(text = colour_by_cond))
@@ -64,18 +60,15 @@ varSubset = function(data, lon = NULL, lat = NULL,
         cond = cond & size_by_cond
     }
     
+    ## logically subset the data
     dat = data[cond, keepCols]
-#     if (!is.null(var.cond)) {
-#         if (is.character(var.cond))
-#             var.cond = eval(parse(text = var.cond))
-#         dat = data[cond & var.cond, keepCols]
-#     } else {
-#         dat = data[cond, keepCols]
-#     }
     
+    ## display warning if there are no rows in the data
     if (nrow(dat) == 0)
         stop("No observations in data frame.")
     
+    ## the first two columns are named "lon" and "lat"
+    ## which are consistently used in other functions
     colnames(dat)[1:2] = c("lon", "lat")
     
     return(dat)
