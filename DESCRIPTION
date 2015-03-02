@@ -1,8 +1,11 @@
 Package: iNZightMaps
-Title: What the package does (one line)
+Type: Package
+Title: iNZightMaps
 Version: 0.1
-Authors@R: "First Last <first.last@example.com> [aut, cre]"
-Description: What the package does (one paragraph)
-Depends: R (>= 3.1.1)
-License: What license is it under?
-LazyData: true
+Authors@R: c(person("Eric", "Lim", role = c("aut", "cre"),
+           email = "jlim062@aucklanduni.ac.nz"))
+Depends: R(>= 3.1.1)
+Imports: ggplot2, ggmap
+Suggests: iNZight
+Description: Simple plotting functions for geographical data.
+License: GPL-2
