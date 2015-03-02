@@ -2,6 +2,9 @@
 
 choropleth.world = function(data, region, value = NULL, title = NULL,
                             low = "#DDFFDD", high = "#005500") {
+    
+    suppressPackageStartupMessages(library(ggplot2))
+    
     world = map_data(map = "world")
     world[world$region == "USSR", "region"] = "Russia"
     world[world$region == "UK", "reigon"] = "United Kingdom"
