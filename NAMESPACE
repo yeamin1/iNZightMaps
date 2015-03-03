@@ -1,0 +1,4 @@
+import(ggmap)
+import(ggplot2)
+
+export(draw, drawMap, generateLine, getLoc, isGeoData, varSubset)
