@@ -1,4 +1,5 @@
 import(ggmap)
 import(ggplot2)
 
-export(draw, drawMap, generateLine, getLoc, isGeoData, varSubset)
+export(draw, drawMap, generateLine, getBB, getLoc, varSubset,
+       isGeoData, getLon, getLat, hasLon, hasLat, isLon, isLat)
