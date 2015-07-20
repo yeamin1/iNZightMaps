@@ -23,7 +23,7 @@ hasLat = function(data) { length(getLat(data)) > 0 }
 isLon = function(data) {
     values = data[!is.na(data[[getLon(data)]]), getLon(data)]
     ret = TRUE
-    if(any(!is.finite(values)) & any(values < -180) & any(values > 180)) {
+    if(any(!is.finite(values)) | any(values < -180) | any(values > 180)) {
         ret = FALSE
         stop("Longitude must be between -180 and 180.")
     }
@@ -31,9 +31,9 @@ isLon = function(data) {
 }
 
 isLat = function(data) {
-    values = data[!is.na(data[[getLon(data)]]), getLon(data)]
+    values = data[!is.na(data[[getLat(data)]]), getLat(data)]
     ret = TRUE
-    if(any(!is.finite(values)) & any(values < -90) & any(values > 90)) {
+    if(any(!is.finite(values)) | any(values < -90) | any(values > 90)) {
         ret = FALSE
         stop("Latitude must be between -90 and 90.")
     }

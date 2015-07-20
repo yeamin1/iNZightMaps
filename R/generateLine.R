@@ -33,8 +33,7 @@ generateLine = function(type, mode = NULL, geom = "polygon", grid = NULL,
         ## mode = "alpha"
         if (any(grepl("alpha", mode))) {
             pLine = gsub(re, "\\1, alpha = colour_by)\\2", pLine)
-            pLine = paste(pLine, "guides(alpha = guide_legend(\"alpha\"))",
-                      sep = " + ")
+            pLine = paste(pLine, "guides(alpha = FALSE)", sep = " + ")
         }
         
         ## mode = "shape"
@@ -119,8 +118,7 @@ generateLine = function(type, mode = NULL, geom = "polygon", grid = NULL,
         ## mode = "alpha"
         if (any(grepl("alpha", mode))) {
             cLine = gsub(re, "\\1, alpha = \"..level..\")\\2", cLine)
-            cLine = paste(cLine, "guides(alpha = guide_legend(\"alpha\"))",
-                          sep = " + ")
+            cLine = paste(pLine, "guides(alpha = FALSE)", sep = " + ")
         }
         
         ## size
